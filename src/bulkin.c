@@ -20,6 +20,7 @@ typedef struct Game {
   VkPhysicalDevice physical_device;
   VkDevice device;
   VkQueue graphicsQueue;
+  VkQueue presentsQueue;
   VkSurfaceKHR surface;
 } Game;
 
