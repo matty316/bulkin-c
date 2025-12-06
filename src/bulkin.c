@@ -123,10 +123,11 @@ void create_instance(Game *game) {
 
   glfw_extensions = glfwGetRequiredInstanceExtensions(&glfw_extension_count);
 
-  uint32_t additional_extensions_count = 2;
+  uint32_t additional_extensions_count = 3;
   const char* additional_extentions[] = {
     VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME,
-    VK_EXT_DEBUG_UTILS_EXTENSION_NAME
+    VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
+    "VK_KHR_get_physical_device_properties2"
   };
 
   uint32_t extension_count = glfw_extension_count + additional_extensions_count;
