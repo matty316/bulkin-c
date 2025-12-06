@@ -72,7 +72,12 @@ VkDevice create_logical_device(VkPhysicalDevice *physical_device) {
   create_info.pQueueCreateInfos = &queue_create_info;
   create_info.queueCreateInfoCount = 1;
   create_info.pEnabledFeatures = &device_features;
-  create_info.enabledExtensionCount = 0;
+
+  const char* device_extensions[] = {
+    "VK_KHR_portability_subset"
+  };
+  create_info.enabledExtensionCount = 1;
+  create_info.ppEnabledExtensionNames = device_extensions;
   create_info.enabledLayerCount = 0;
 
   VkDevice device;
