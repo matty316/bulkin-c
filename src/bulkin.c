@@ -1,5 +1,6 @@
 #include "bulkin.h"
 #include "device.h"
+#include "queue.h"
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
@@ -18,6 +19,8 @@ typedef struct Game {
   VkDebugUtilsMessengerEXT debug_messenger;
   VkPhysicalDevice physical_device;
   VkDevice device;
+  VkQueue graphicsQueue;
+  VkSurfaceKHR surface;
 } Game;
 
 #define LAYER_COUNT 1
@@ -32,10 +35,10 @@ const bool enable_validation_layers = true;
 #endif
 
 static VKAPI_ATTR VkBool32 VKAPI_CALL debug_callback(
-  VkDebugUtilsMessageSeverityFlagBitsEXT message_severity,
-  VkDebugUtilsMessageTypeFlagsEXT message_type,
+  [[maybe_unused]] VkDebugUtilsMessageSeverityFlagBitsEXT message_severity,
+  [[maybe_unused]] VkDebugUtilsMessageTypeFlagsEXT message_type,
   const VkDebugUtilsMessengerCallbackDataEXT *p_callback_data,
-  void *p_user_data) {
+  [[maybe_unused]] void *p_user_data) {
   printf("validation layer: %s\n", p_callback_data->pMessage);
 
   return VK_FALSE;
@@ -171,11 +174,21 @@ void setup_debug_messenger(Game *game) {
   }
 }
 
+void create_surface(Game *game) {
+  if (glfwCreateWindowSurface(game->instance, game->window, NULL, &game->surface)) {
+    printf("failed to create window surface\n");
+    exit(EXIT_FAILURE);
+  }
+}
+
 void init_vulkan(Game *game) {
   create_instance(game);
   setup_debug_messenger(game);
-  game->physical_device = pick_physical_device(&game->instance);
-  game->device = create_logical_device(&game->physical_device);
+  create_surface(game);
+  game->physical_device = pick_physical_device(&game->instance, &game->surface);
+  QueueFamilyIndices indices = find_queue_fams(&game->physical_device, &game->surface);
+  game->device = create_logical_device(&game->physical_device, indices);
+  game->graphicsQueue = get_graphics_queue(&game->device, indices);
 }
 
 void main_loop(Game *game) {
@@ -194,6 +207,7 @@ void cleanup(Game *game) {
   if (enable_validation_layers)
     destroy_debug_messenger_ext(&game->instance, &game->debug_messenger, NULL);
   vkDestroyDevice(game->device, NULL);
+  vkDestroySurfaceKHR(game->instance, game->surface, NULL);
   vkDestroyInstance(game->instance, NULL);
   glfwDestroyWindow(game->window);
   glfwTerminate();

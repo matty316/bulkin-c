@@ -1,44 +1,17 @@
 #include "device.h"
+#include "queue.h"
+
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
 
-typedef struct QueueFamilyIndices {
-  uint32_t graphics_family;
-  bool has_graphics_family;
-} QueueFamilyIndices;
-
-bool is_queue_family_complete(QueueFamilyIndices *indices) {
-  return indices->has_graphics_family;
-}
-
-QueueFamilyIndices find_queue_fams(VkPhysicalDevice *device) {
-  QueueFamilyIndices indices;
-  indices.has_graphics_family = false;
-
-  uint32_t queue_family_count = 0;
-  vkGetPhysicalDeviceQueueFamilyProperties(*device, &queue_family_count, NULL);
-  VkQueueFamilyProperties properties[queue_family_count];
-  vkGetPhysicalDeviceQueueFamilyProperties(*device, &queue_family_count, properties);
-
-  for (size_t i = 0; i < queue_family_count; i++) {
-    if (is_queue_family_complete(&indices)) break;
-
-    if (properties->queueFlags & VK_QUEUE_GRAPHICS_BIT) {
-      indices.graphics_family = i;
-      indices.has_graphics_family = true;
-    }
-  }
-  return indices;
-}
-
-bool is_device_suitible(VkPhysicalDevice *device) {
-  QueueFamilyIndices indices = find_queue_fams(device);
+bool is_device_suitible(VkPhysicalDevice *device, VkSurfaceKHR *surface) {
+  QueueFamilyIndices indices = find_queue_fams(device, surface);
   return is_queue_family_complete(&indices);
 }
 
-VkPhysicalDevice pick_physical_device(VkInstance *instance) {
+VkPhysicalDevice pick_physical_device(VkInstance *instance, VkSurfaceKHR *surface) {
   uint32_t device_count = 0;
   vkEnumeratePhysicalDevices(*instance, &device_count, NULL);
 
@@ -48,15 +21,13 @@ VkPhysicalDevice pick_physical_device(VkInstance *instance) {
   vkEnumeratePhysicalDevices(*instance, &device_count, devices);
 
   for (size_t i = 0; i < device_count; i++)
-    if (is_device_suitible(&devices[i])) return devices[i];
+    if (is_device_suitible(&devices[i], surface)) return devices[i];
 
   printf("cannot find suitible physical device");
   exit(EXIT_FAILURE);
 }
 
-VkDevice create_logical_device(VkPhysicalDevice *physical_device) {
-  QueueFamilyIndices indices = find_queue_fams(physical_device);
-
+VkDevice create_logical_device(VkPhysicalDevice *physical_device, QueueFamilyIndices indices) {
   VkDeviceQueueCreateInfo queue_create_info = {};
   queue_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
   queue_create_info.queueFamilyIndex = indices.graphics_family;
@@ -73,11 +44,7 @@ VkDevice create_logical_device(VkPhysicalDevice *physical_device) {
   create_info.queueCreateInfoCount = 1;
   create_info.pEnabledFeatures = &device_features;
 
-  const char* device_extensions[] = {
-    "VK_KHR_portability_subset"
-  };
-  create_info.enabledExtensionCount = 1;
-  create_info.ppEnabledExtensionNames = device_extensions;
+  create_info.enabledExtensionCount = 0;
   create_info.enabledLayerCount = 0;
 
   VkDevice device;
@@ -87,4 +54,10 @@ VkDevice create_logical_device(VkPhysicalDevice *physical_device) {
     exit(EXIT_FAILURE);
   }
   return device;
+}
+
+VkQueue get_graphics_queue(VkDevice *device, QueueFamilyIndices indices) {
+  VkQueue graphics_queue;
+  vkGetDeviceQueue(*device, indices.graphics_family, 0, &graphics_queue);
+  return graphics_queue;
 }
