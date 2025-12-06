@@ -65,7 +65,7 @@ VkDevice create_logical_device(VkPhysicalDevice *physical_device) {
   float queue_priority = 1.0f;
   queue_create_info.pQueuePriorities = &queue_priority;
 
-  VkPhysicalDeviceFeatures device_features;
+  VkPhysicalDeviceFeatures device_features = {};
 
   VkDeviceCreateInfo create_info = {};
   create_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
