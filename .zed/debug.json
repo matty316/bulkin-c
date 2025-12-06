@@ -7,10 +7,9 @@
     "label": "debug",
     "build": {
       "command": "./clean.sh && ./build.sh",
-      "args": [],
-      "cwd": "$ZED_WORKTREE_ROOT"
+      "args": []
     },
-    "program": "$ZED_WORKTREE_ROOT/build/app",
+    "program": "build/app",
     "args": [],
     "request": "launch",
     "adapter": "GDB"
