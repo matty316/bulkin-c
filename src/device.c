@@ -73,10 +73,12 @@ VkDevice create_logical_device(VkPhysicalDevice *physical_device) {
   create_info.queueCreateInfoCount = 1;
   create_info.pEnabledFeatures = &device_features;
   create_info.enabledExtensionCount = 0;
+  create_info.flags = 0;
   create_info.enabledLayerCount = 0;
 
   VkDevice device;
-  if (vkCreateDevice(*physical_device, &create_info, NULL, &device) != VK_SUCCESS) {
+  VkResult result = vkCreateDevice(*physical_device, &create_info, NULL, &device);
+  if (result != VK_SUCCESS) {
     printf("unable to create logical device");
     exit(EXIT_FAILURE);
   }
