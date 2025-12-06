@@ -119,14 +119,22 @@ void create_instance(Game *game) {
 
   glfw_extensions = glfwGetRequiredInstanceExtensions(&glfw_extension_count);
 
-  uint32_t extension_count = glfw_extension_count + 1;
+  uint32_t additional_extensions_count = 2;
+  const char* additional_extentions[] = {
+    VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME,
+    VK_EXT_DEBUG_UTILS_EXTENSION_NAME
+  };
+
+  uint32_t extension_count = glfw_extension_count + additional_extensions_count;
   const char *extensions[extension_count];
 
   for (size_t i = 0; i < glfw_extension_count; i++) {
     extensions[i] = glfw_extensions[i];
   }
 
-  extensions[glfw_extension_count] = VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME;
+  for (size_t i = 0; i < additional_extensions_count; i++) {
+    extensions[glfw_extension_count + i] = additional_extentions[i];
+  }
 
   create_info.enabledExtensionCount = extension_count;
   create_info.ppEnabledExtensionNames = extensions;
