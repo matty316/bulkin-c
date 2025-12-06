@@ -58,7 +58,7 @@ VkDevice create_logical_device(VkPhysicalDevice *physical_device) {
   QueueFamilyIndices indices = find_queue_fams(physical_device);
 
   VkDeviceQueueCreateInfo queue_create_info;
-  queue_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+  queue_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
   queue_create_info.queueFamilyIndex = indices.graphics_family;
   queue_create_info.queueCount = 1;
 

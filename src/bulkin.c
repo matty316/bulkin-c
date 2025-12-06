@@ -136,12 +136,14 @@ void create_instance(Game *game) {
     extensions[glfw_extension_count + i] = additional_extentions[i];
   }
 
+  create_info.flags |= VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
+
   create_info.enabledExtensionCount = extension_count;
   create_info.ppEnabledExtensionNames = extensions;
 
   VkDebugUtilsMessengerCreateInfoEXT debug_create_info;
   if (enable_validation_layers) {
-    create_info.enabledExtensionCount = (uint32_t)LAYER_COUNT;
+    create_info.enabledLayerCount = (uint32_t)LAYER_COUNT;
     create_info.ppEnabledLayerNames = validation_layers;
 
     populate_debug_messenger_create_info(&debug_create_info);
