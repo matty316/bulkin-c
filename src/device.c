@@ -74,6 +74,7 @@ VkDevice create_logical_device(VkPhysicalDevice *physical_device) {
   create_info.pEnabledFeatures = &device_features;
   create_info.enabledExtensionCount = 0;
   create_info.flags = 0;
+  create_info.pNext = NULL;
   create_info.enabledLayerCount = 0;
 
   VkDevice device;
