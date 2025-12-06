@@ -91,7 +91,6 @@ void populate_debug_messenger_create_info(VkDebugUtilsMessengerCreateInfoEXT *cr
   create_info->messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
   create_info->messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
   create_info->pfnUserCallback = debug_callback;
-  create_info->flags = 0;
   create_info->pUserData = NULL;
 }
 
@@ -101,7 +100,7 @@ void create_instance(Game *game) {
     exit(EXIT_FAILURE);
   }
 
-  VkApplicationInfo app_info;
+  VkApplicationInfo app_info = {};
   app_info.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
   app_info.pApplicationName = "Bulkin";
   app_info.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
@@ -109,7 +108,7 @@ void create_instance(Game *game) {
   app_info.engineVersion = VK_MAKE_VERSION(1, 0, 0);
   app_info.apiVersion = VK_API_VERSION_1_0;
 
-  VkInstanceCreateInfo create_info;
+  VkInstanceCreateInfo create_info = {};
   create_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
   create_info.pApplicationInfo = &app_info;
 
@@ -163,7 +162,7 @@ void create_instance(Game *game) {
 void setup_debug_messenger(Game *game) {
   if (!enable_validation_layers) return;
 
-  VkDebugUtilsMessengerCreateInfoEXT create_info;
+  VkDebugUtilsMessengerCreateInfoEXT create_info = {};
   populate_debug_messenger_create_info(&create_info);
 
   if (create_debug_utils_messenger_ext(&game->instance, &create_info, NULL, &game->debug_messenger) != VK_SUCCESS) {
