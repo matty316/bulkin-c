@@ -44,9 +44,14 @@ VkDevice create_logical_device(VkPhysicalDevice *physical_device, QueueFamilyInd
   create_info.queueCreateInfoCount = 1;
   create_info.pEnabledFeatures = &device_features;
 
+  #if __APPLE__
   const char* exensions[] = {"VK_KHR_portability_subset"};
   create_info.enabledExtensionCount = 1;
   create_info.ppEnabledExtensionNames = exensions;
+  #else
+  create_info.enabledExtensionCount = 0;
+  #endif
+
   create_info.enabledLayerCount = 0;
 
   VkDevice device;
